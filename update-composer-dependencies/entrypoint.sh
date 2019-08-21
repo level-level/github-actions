@@ -5,7 +5,9 @@ git config --global user.email "bot+github@level-level.com"
 git config --global user.name "Level Level Bot on GitHub"
 TIMESTAMP=$(date +'%s')
 git checkout -b auto-update/$TIMESTAMP
+echo "Creating a fresh composer install.";
 composer install
+echo "Gathering composer outdated information.";
 for plugin in $(composer outdated --direct -m -f json | jq -r ".installed[].name");
 do
     echo "Updating $plugin.";
@@ -13,5 +15,5 @@ do
     git add composer.lock;
     git commit -m "Update $plugin dependency" -m "$LOG";
 done;
-
+echo "Done. Pushing branch.";
 git push -u origin auto-update/$TIMESTAMP
