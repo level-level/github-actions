@@ -1,6 +1,7 @@
 #!/bin/sh -l
 
 echo "Starting update sequence."
+remote_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 git config --global user.email "bot+github@level-level.com"
 git config --global user.name "Level Level Bot on GitHub"
 TIMESTAMP=$(date +'%s')
@@ -15,5 +16,8 @@ do
     git add composer.lock;
     git commit -m "Update $plugin dependency" -m "$LOG";
 done;
+git remote rm origin
+git remote add origin "${remote_repo}"
+
 echo "Done. Pushing branch.";
 git push -u origin auto-update/$TIMESTAMP
