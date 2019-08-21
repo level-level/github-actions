@@ -18,7 +18,7 @@ git config --global user.name "[BOT] Tanktop Al Dente"
 TIMESTAMP=$(date +'%s')
 git checkout -b auto-update/$TIMESTAMP
 echo "Creating a fresh composer install.";
-composer install
+composer install --no-ansi --no-suggest --no-progress
 echo "Gathering composer outdated information.";
 for plugin in $(composer outdated --direct -m -f json | jq -r ".installed[].name");
 do
