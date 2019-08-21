@@ -2,8 +2,8 @@
 
 echo "Starting update sequence."
 remote_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-git config --global user.email "bot+github@level-level.com"
-git config --global user.name "Level Level Bot on GitHub"
+git config --global user.email "tank-top-bot+al-dente@level-level.com"
+git config --global user.name "Tanktop Al Dente (bot)"
 TIMESTAMP=$(date +'%s')
 git checkout -b auto-update/$TIMESTAMP
 echo "Creating a fresh composer install.";
