@@ -1,6 +1,5 @@
 #!/bin/sh -l
 
-
 if [[ -z "$GITHUB_TOKEN" ]]; then
 	echo "Set the GITHUB_TOKEN env variable."
 	exit 1
@@ -15,8 +14,16 @@ echo "Starting update sequence."
 remote_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 git config --global user.email "bot-tank-top+al-dente@level-level.com"
 git config --global user.name "[BOT] Tanktop Al Dente"
-TIMESTAMP=$(date +'%s')
-git checkout -b auto-update/$TIMESTAMP
+
+if git show-ref --quiet refs/heads/auto-update/composer; then
+    echo Branch exists.
+    git checkout auto-update/composer
+    is_new_branch=false
+else
+    git checkout -b auto-update/composer
+    is_new_branch=true
+fi
+
 echo "Creating a fresh composer install.";
 composer install --no-ansi --no-suggest --no-progress
 echo "Gathering composer outdated information.";
@@ -31,12 +38,16 @@ git remote rm origin
 git remote add origin "${remote_repo}"
 
 echo "Done. Pushing branch.";
-git push -u origin auto-update/$TIMESTAMP
+git push -u origin auto-update/composer
 
-echo "Opening pull request.";
-curl -XPOST -fsSL \
-    -H "${AUTH_HEADER}" \
-    -H "${API_HEADER}" \
-    -H "Content-Type: application/json" \
-    -d "{\"head\":\"auto-update/$TIMESTAMP\", \"base\":\"master\", \"title\":\"Plugin updates\", \"body\":\"Minor updates automatically created.\"}" \
-    "${URI}/repos/${GITHUB_REPOSITORY}/pulls"
+if [ "$is_new_branch" = true ]; then
+    echo "Opening pull request.";
+    curl -XPOST -fsSL \
+        -H "${AUTH_HEADER}" \
+        -H "${API_HEADER}" \
+        -H "Content-Type: application/json" \
+        -d "{\"head\":\"auto-update/composer\", \"base\":\"master\", \"title\":\"Plugin updates\", \"body\":\"Minor updates automatically created.\"}" \
+        "${URI}/repos/${GITHUB_REPOSITORY}/pulls"
+else
+    echo "Skipping pull request creation. Pull request should already exist.";
+fi
