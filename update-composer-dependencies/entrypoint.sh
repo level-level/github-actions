@@ -15,7 +15,7 @@ remote_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSIT
 git config --global user.email "bot-tank-top+al-dente@level-level.com"
 git config --global user.name "[BOT] Tanktop Al Dente"
 
-if git show-ref --quiet refs/heads/auto-update/composer; then
+if git show-ref --quiet refs/remotes/origin/auto-update/composer; then
     echo Branch exists.
     git checkout auto-update/composer
     is_new_branch=false
